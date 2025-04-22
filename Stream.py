@@ -321,8 +321,8 @@ if submitted:
 
     st.markdown(f"""
     - **Cointegration test p-value**: `{p_value:.5f}` → {'✅ Cointegrated' if p_value < 0.05 else '❌ Not cointegrated'}
-    - **ADF Statistic (spread)**: `{adf_result_spread[0]:.4f}` — p-value: `{adf_result_spread[1]:.5f}` → {'✅ Stationary' if adf_result_spread[1] < 0.05 else '❌ Not stationary'}
-    - **ADF Statistic (ratio)**: `{adf_result_ratio[0]:.4f}` — p-value: `{adf_result_ratio[1]:.5f}` → {'✅ Stationary' if adf_result_ratio[1] < 0.05 else '❌ Not stationary'}
+    - **ADF Spread**: ` p-value: `{adf_result_spread[1]:.5f}` → {'✅ Stationary' if adf_result_spread[1] < 0.05 else '❌ Not stationary'}
+    - **ADF Ratio**: `p-value: `{adf_result_ratio[1]:.5f}` → {'✅ Stationary' if adf_result_ratio[1] < 0.05 else '❌ Not stationary'}
     """)
 
     for strategy_name, results in Bt.items():
