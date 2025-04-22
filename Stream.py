@@ -25,6 +25,34 @@ take_profitz = 2
 
 st.set_page_config(page_title="Pair Trading Backtest", layout="wide")
 st.title("Pair Trading Backtest")
+st.markdown("""
+## Strategy Overview: Pair Trading Backtest
+
+This tool implements a **pair trading strategy**, a classic form of **statistical arbitrage** that exploits temporary mispricings between two historically correlated assets.
+
+### What does it do?
+
+The algorithm:
+- Downloads historical price data for two assets.
+- Tests whether they are **cointegrated**, meaning their price relationship is stable in the long run.
+- Computes **z-scores** based on either their price ratio or price spread.
+- Simulates a trading strategy that:
+    - Enters a **long/short position** when the z-score exceeds a specified threshold.
+    - Exits the position when the relationship mean-reverts, or when a **take-profit** or **stop-loss** is triggered.
+
+### Core Assumptions
+
+1. **Mean Reversion**: The price spread (or ratio) between the two assets will revert to its historical mean.
+2. **Cointegration**: Even if the prices themselves are not stationary, a **linear combination** of them is.
+3. **No Structural Breaks**: The relationship remains valid over the in-sample and out-of-sample periods.
+
+### Goal
+
+To **profit from short-term inefficiencies** in the pricing relationship between the two assets. By identifying moments when they diverge too much from their typical behavior (high z-scores), we assume the deviation is temporary and can be traded profitably when it closes.
+
+Use the form below to configure your backtest and explore the potential of the pair trading strategy under different market conditions.
+""")
+
 
 with st.form(key="params_form"):
     st.subheader("Parameters of the strategy")
