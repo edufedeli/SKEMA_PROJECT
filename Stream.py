@@ -95,8 +95,7 @@ if submitted:
         st.pyplot(plt.gcf())
         plt.clf()
 
-        st.subheader(f"📈 {label} -Performance Metrics")
-        st.write({
+        metrics_dict = {
             "Cumulative Return": f"{cum_ret2:.2%}",
             "Mean Return": f"{mean_return:.2%}",
             "Annualized Return": f"{annualized_return:.2%}",
@@ -106,8 +105,12 @@ if submitted:
             "Sortino Ratio": f"{infra_down:.2f}",
             "Max Drawdown": f"{Max_draw:.2%}",
             "Calmar Ratio": f"{cal:.2f}",
-        })
+        }
 
+        metrics_df = pd.DataFrame(metrics_dict.items(), columns=["Metric", "Value"])
+
+        st.subheader(f"📈 {label} - Performance Metrics")
+        st.table(metrics_df)
 
     def backtest(data, in_sample_years, out_sample_years, initial_capital, leverage,
                  transaction_cost, soglia_z_score, stop_loss, take_profit,
@@ -404,5 +407,3 @@ if submitted:
     plt.tight_layout()
     st.pyplot(plt.gcf())
     plt.clf()
-
-
