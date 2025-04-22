@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 ##########INPUT##########
 Asset1_tickerz = "BZ=F"
 Asset2_tickerz = "CL=F"
-startz = "2020-05-01"
+startz = "2015-04-22"
 endz = "2025-04-22"
 intervalz = "1D"
 transaction_costz = 0.005
