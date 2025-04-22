@@ -116,8 +116,8 @@ if submitted:
                  transaction_cost, soglia_z_score, stop_loss, take_profit,
                  start_date, end_date, rolling_window):
         z_score_columns = [
-            "rolling_z_score_spread",
-            "rolling_z_score_ratio"
+            "Rolling Z Score Spread",
+            "Rolling Z Score Ratio"
         ]
 
         all_results = {}
@@ -153,13 +153,13 @@ if submitted:
                 in_sample_data = data[(data.index >= current_start) & (data.index < in_sample_end)].copy()
                 out_sample_data = data[(data.index >= in_sample_end) & (data.index < out_sample_end)].copy()
 
-                if z_col == "rolling_z_score_spread":
+                if z_col == "Rolling Z Score Spread":
                     out_sample_data["spread"] = out_sample_data["Close_A1"] - out_sample_data["Close_A2"]
                     rolling_mean = out_sample_data["spread"].rolling(window=rolling_window).mean()
                     rolling_std = out_sample_data["spread"].rolling(window=rolling_window).std()
                     out_sample_data["z_score"] = (out_sample_data["spread"] - rolling_mean) / rolling_std
 
-                elif z_col == "rolling_z_score_ratio":
+                elif z_col == "Rolling Z Score Ratio":
                     out_sample_data["ratio"] = out_sample_data["Close_A1"] / out_sample_data["Close_A2"]
                     rolling_mean = out_sample_data["ratio"].rolling(window=rolling_window).mean()
                     rolling_std = out_sample_data["ratio"].rolling(window=rolling_window).std()
@@ -302,17 +302,17 @@ if submitted:
 
     data["rolling_mean_spread"] = data["spread"].rolling(window=rolling_window).mean()
     data["rolling_std_spread"] = data["spread"].rolling(window=rolling_window).std()
-    data["rolling_z_score_spread"] = (data["spread"] - data["rolling_mean_spread"]) / data["rolling_std_spread"]
+    data["Rolling Z Score Spread"] = (data["spread"] - data["rolling_mean_spread"]) / data["rolling_std_spread"]
 
-    long_signal_3 = data["rolling_z_score_spread"] < -soglia_z_score
-    short_signal_3 = data["rolling_z_score_spread"] > soglia_z_score
+    long_signal_3 = data["Rolling Z Score Spread"] < -soglia_z_score
+    short_signal_3 = data["Rolling Z Score Spread"] > soglia_z_score
 
     data["rolling_mean_ratio"] = data["ratio_prezzi"].rolling(window=rolling_window).mean()
     data["rolling_std_ratio"] = data["ratio_prezzi"].rolling(window=rolling_window).std()
-    data["rolling_z_score_ratio"] = (data["ratio_prezzi"] - data["rolling_mean_ratio"]) / data["rolling_std_ratio"]
+    data["Rolling Z Score Ratio"] = (data["ratio_prezzi"] - data["rolling_mean_ratio"]) / data["rolling_std_ratio"]
 
-    long_signal_4 = data["rolling_z_score_ratio"] < -soglia_z_score
-    short_signal_4 = data["rolling_z_score_ratio"] > soglia_z_score
+    long_signal_4 = data["Rolling Z Score Ratio"] < -soglia_z_score
+    short_signal_4 = data["Rolling Z Score Ratio"] > soglia_z_score
 
     Bt = backtest(data, in_sample_years, out_sample_years, initial_capital, leverage, transaction_cost, soglia_z_score,
                   stop_loss, take_profit, start, end, rolling_window)
@@ -385,7 +385,7 @@ if submitted:
     plt.clf()
 
     plt.figure(figsize=(14, 6))
-    plt.plot(data["rolling_z_score_spread"], label='Z-Score Spread Rolling (60g)')
+    plt.plot(data["Rolling Z Score Spread"], label='Z-Score Spread Rolling (60g)')
     plt.axhline(soglia_z_score, color='green', linestyle='--', alpha=0.5)
     plt.axhline(-soglia_z_score, color='red', linestyle='--', alpha=0.5)
     plt.title("Static Z-Score Spread vs Rolling (60 giorni)")
@@ -397,7 +397,7 @@ if submitted:
     plt.clf()
 
     plt.figure(figsize=(14, 6))
-    plt.plot(data["rolling_z_score_ratio"], label='Z-Score Ratio Rolling (60g)')
+    plt.plot(data["Rolling Z Score Ratio"], label='Z-Score Ratio Rolling (60g)')
     plt.axhline(soglia_z_score, color='green', linestyle='--', alpha=0.5)
     plt.axhline(-soglia_z_score, color='red', linestyle='--', alpha=0.5)
     plt.title("Static Z-Score Ratio vs Rolling (60 giorni)")
