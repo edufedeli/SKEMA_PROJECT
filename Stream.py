@@ -317,18 +317,6 @@ if submitted:
     Bt = backtest(data, in_sample_years, out_sample_years, initial_capital, leverage, transaction_cost, soglia_z_score,
                   stop_loss, take_profit, start, end, rolling_window)
 
-    st.subheader("Cointegration and Stationarity test:")
-
-    st.markdown(f"""
-    - **Cointegration test**: `{p_value:.5f}` → {'✅ Cointegrated' if p_value < 0.05 else '❌ Not cointegrated'}
-    - **ADF Spread**: `{adf_result_spread[1]:.5f}` → {'✅ Stationary' if adf_result_spread[1] < 0.05 else '❌ Not stationary'}
-    - **ADF Ratio**: `{adf_result_ratio[1]:.5f}` → {'✅ Stationary' if adf_result_ratio[1] < 0.05 else '❌ Not stationary'}
-    """)
-
-    for strategy_name, results in Bt.items():
-        print(f"\n--- Metrics for: {strategy_name} ---\n")
-        equity = results["equity_curve"].to_frame(name="Portfolio")
-        Metrics_Portfolio(equity, label=strategy_name)
 
     plt.figure(figsize=(14, 6))
     plt.plot(data.index, data['Close_A1'], label=Asset1_ticker, color='blue')
@@ -407,3 +395,16 @@ if submitted:
     plt.tight_layout()
     st.pyplot(plt.gcf())
     plt.clf()
+
+    st.subheader("Cointegration and Stationarity test:")
+
+    st.markdown(f"""
+    - **Cointegration test**: `{p_value:.5f}` → {'✅ Cointegrated' if p_value < 0.05 else '❌ Not cointegrated'}
+    - **ADF Spread**: `{adf_result_spread[1]:.5f}` → {'✅ Stationary' if adf_result_spread[1] < 0.05 else '❌ Not stationary'}
+    - **ADF Ratio**: `{adf_result_ratio[1]:.5f}` → {'✅ Stationary' if adf_result_ratio[1] < 0.05 else '❌ Not stationary'}
+    """)
+
+    for strategy_name, results in Bt.items():
+        print(f"\n--- Metrics for: {strategy_name} ---\n")
+        equity = results["equity_curve"].to_frame(name="Portfolio")
+        Metrics_Portfolio(equity, label=strategy_name)
