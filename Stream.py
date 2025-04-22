@@ -341,7 +341,7 @@ if submitted:
     st.pyplot(plt.gcf())
     plt.clf()
 
-    st.subheader("📊 Static Correlation")
+    st.subheader("Static Correlation")
     st.dataframe(Correlation)
 
     plt.figure(figsize=(14, 6))
