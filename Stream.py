@@ -27,31 +27,31 @@ st.set_page_config(page_title="Pair Trading Backtest", layout="wide")
 st.title("Pair Trading Backtest")
 
 with st.form(key="params_form"):
-    st.subheader("Parametri della Strategia")
+    st.subheader("Parameters of the strategy")
     col1, col2 = st.columns(2)
     with col1:
         Asset1_ticker = st.text_input("Ticker Asset 1", value= Asset1_tickerz)
-        start = st.date_input("Data Inizio", pd.to_datetime(startz))
+        start = st.date_input("Start Date", pd.to_datetime(startz))
         transaction_cost = st.number_input("Transaction Cost (%)", value=transaction_costz)
-        leverage = st.number_input("Leva", value=leveragez)
+        leverage = st.number_input("Leverage", value=leveragez)
         rolling_window = st.number_input("Rolling Window", value=rolling_windowz)
         stop_loss = st.number_input("Stop Loss (%)", value=stop_lossz)
     with col2:
         Asset2_ticker = st.text_input("Ticker Asset 2", value=Asset2_tickerz)
-        end = st.date_input("Data Fine", pd.to_datetime(endz))
-        interval = st.selectbox("Frequenza", ["1d", "1h", "1wk"])
-        initial_capital = st.number_input("Capitale Iniziale", value=initial_capitalz)
+        end = st.date_input("End Date", pd.to_datetime(endz))
+        interval = st.selectbox("Frequency", ["1d", "1h", "1wk"])
+        initial_capital = st.number_input("Starting Capital", value=initial_capitalz)
         soglia_z_score = st.number_input("Z-score Threshold", value=soglia_z_scorez)
         take_profit = st.number_input("Take Profit (%)", value=take_profitz)
 
-    in_sample_years = st.number_input("Anni In-Sample", value=in_sample_yearsz)
-    out_sample_years = st.number_input("Anni Out-of-Sample", value=out_sample_yearsz)
+    in_sample_years = st.number_input("In-Sample Years", value=in_sample_yearsz)
+    out_sample_years = st.number_input("Out-of-Sample Years", value=out_sample_yearsz)
 
-    submitted = st.form_submit_button("Esegui Backtest")
+    submitted = st.form_submit_button("Backtest")
 
 if submitted:
     st.write("""---""")
-    st.write("Caricamento dati e regressione...")
+    st.write("Loading data...")
 
 
     def get_data(ticker, start, end, interval=interval):
@@ -95,7 +95,7 @@ if submitted:
         st.pyplot(plt.gcf())
         plt.clf()
 
-        st.subheader(f"📈 {label} - Metriche di Performance")
+        st.subheader(f"📈 {label} -Performance Metrics")
         st.write({
             "Cumulative Return": f"{cum_ret2:.2%}",
             "Mean Return": f"{mean_return:.2%}",
@@ -314,19 +314,13 @@ if submitted:
     Bt = backtest(data, in_sample_years, out_sample_years, initial_capital, leverage, transaction_cost, soglia_z_score,
                   stop_loss, take_profit, start, end, rolling_window)
 
-    st.subheader("Test di Stazionarietà e Cointegrazione")
+    st.subheader("Cointegration and Stationarity test:")
 
     st.markdown(f"""
-    - **Cointegration test p-value**: `{p_value:.5f}` → {'✅ Cointegrati' if p_value < 0.05 else '❌ Non cointegrati'}
-    - **ADF Statistic (spread)**: `{adf_result_spread[0]:.4f}` — p-value: `{adf_result_spread[1]:.5f}` → {'✅ Stazionario' if adf_result_spread[1] < 0.05 else '❌ Non stazionario'}
-    - **ADF Statistic (ratio)**: `{adf_result_ratio[0]:.4f}` — p-value: `{adf_result_ratio[1]:.5f}` → {'✅ Stazionario' if adf_result_ratio[1] < 0.05 else '❌ Non stazionario'}
+    - **Cointegration test p-value**: `{p_value:.5f}` → {'✅ Cointegrated' if p_value < 0.05 else '❌ Not cointegrated'}
+    - **ADF Statistic (spread)**: `{adf_result_spread[0]:.4f}` — p-value: `{adf_result_spread[1]:.5f}` → {'✅ Stationary' if adf_result_spread[1] < 0.05 else '❌ Not stationary'}
+    - **ADF Statistic (ratio)**: `{adf_result_ratio[0]:.4f}` — p-value: `{adf_result_ratio[1]:.5f}` → {'✅ Stationary' if adf_result_ratio[1] < 0.05 else '❌ Not stationary'}
     """)
-
-    with pd.ExcelWriter('Backtest_Result.xlsx') as writer:
-        for strategy, result in Bt.items():
-            result['results'].to_excel(writer, sheet_name=f"{strategy}_summary")
-            if not result['trades'].empty:
-                result['trades'].to_excel(writer, sheet_name=f"{strategy}_trades")
 
     for strategy_name, results in Bt.items():
         print(f"\n--- Metrics for: {strategy_name} ---\n")
@@ -354,7 +348,7 @@ if submitted:
     st.pyplot(plt.gcf())
     plt.clf()
 
-    st.subheader("📊 Correlazione")
+    st.subheader("📊 Static Correlation")
     st.dataframe(Correlation)
 
     plt.figure(figsize=(14, 6))
@@ -365,7 +359,7 @@ if submitted:
     plt.axhline(spread_mean - soglia_z_score * spread_std, color='red', linestyle='--',
                 label='Lower Threshold (-' + str(soglia_z_score) + 'σ)')
     plt.legend()
-    plt.title("Spread e Soglie di Trading")
+    plt.title("Spread and Trading Signals")
     plt.ylabel("Spread")
     plt.xlabel("Time")
     plt.tight_layout()
@@ -373,14 +367,14 @@ if submitted:
     plt.clf()
 
     plt.figure(figsize=(14, 6))
-    plt.plot(data["ratio_prezzi"], label='Ratio Prezzi')
+    plt.plot(data["ratio_prezzi"], label='Ratio Price')
     plt.axhline(ratio_mean, color='blue', linestyle='--', label='Ratio Mean')
     plt.axhline(ratio_mean + soglia_z_score * ratio_std, color='green', linestyle='--',
                 label='Upper Threshold (+' + str(soglia_z_score) + 'σ)')
     plt.axhline(ratio_mean - soglia_z_score * ratio_std, color='red', linestyle='--',
                 label='Lower Threshold (-' + str(soglia_z_score) + 'σ)')
     plt.legend()
-    plt.title("Ratio e Soglie di Trading")
+    plt.title("Ratio and Trading Signals")
     plt.ylabel("Ratio")
     plt.xlabel("Time")
     plt.tight_layout()
@@ -391,7 +385,7 @@ if submitted:
     plt.plot(data["rolling_z_score_spread"], label='Z-Score Spread Rolling (60g)')
     plt.axhline(soglia_z_score, color='green', linestyle='--', alpha=0.5)
     plt.axhline(-soglia_z_score, color='red', linestyle='--', alpha=0.5)
-    plt.title("Confronto Z-Score Spread Statico vs Rolling (60 giorni)")
+    plt.title("Static Z-Score Spread vs Rolling (60 giorni)")
     plt.xlabel("Date")
     plt.ylabel("Z-Score Spread")
     plt.legend()
@@ -403,7 +397,7 @@ if submitted:
     plt.plot(data["rolling_z_score_ratio"], label='Z-Score Ratio Rolling (60g)')
     plt.axhline(soglia_z_score, color='green', linestyle='--', alpha=0.5)
     plt.axhline(-soglia_z_score, color='red', linestyle='--', alpha=0.5)
-    plt.title("Confronto Z-Score Ratio Statico vs Rolling (60 giorni)")
+    plt.title("Static Z-Score Ratio vs Rolling (60 giorni)")
     plt.xlabel("Date")
     plt.ylabel("Z-Score Ratio")
     plt.legend()
