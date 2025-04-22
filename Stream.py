@@ -107,9 +107,9 @@ if submitted:
             "Calmar Ratio": f"{cal:.2f}",
         }
 
-        metrics_df = pd.DataFrame(metrics_dict.items(), columns=["Metric", "Value"])
-
-        st.subheader(f"📈 {label} - Performance Metrics")
+        st.subheader(f"{label} - Performance Metrics")
+        metrics_df = pd.DataFrame.from_dict(metrics_dict, orient="index", columns=["Value"])
+        metrics_df.index.name = "Metric"
         st.table(metrics_df)
 
     def backtest(data, in_sample_years, out_sample_years, initial_capital, leverage,
@@ -277,6 +277,8 @@ if submitted:
     # data["rolling_spread"] = data['Close_A1'] - b_rolling*data['Close_A2']
 
     Correlation = data[['Returns_A1', 'Returns_A2']].corr()
+    Correlation.columns = [Asset1_ticker, Asset2_ticker]
+    Correlation.index = [Asset1_ticker, Asset2_ticker]
     data["rolling_correlation"] = data['Returns_A1'].rolling(window=rolling_window).corr(data['Returns_A2']).dropna()
 
     score, p_value, _ = coint(data['Close_A1'], data['Close_A2'])
