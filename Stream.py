@@ -60,17 +60,17 @@ with st.form(key="params_form"):
     with col1:
         Asset1_ticker = st.text_input("Ticker Asset 1", value= Asset1_tickerz)
         start = st.date_input("Start Date", pd.to_datetime(startz))
-        transaction_cost = st.number_input("Transaction Cost (%)", value=transaction_costz)
+        transaction_cost = st.number_input("Transaction Cost", value=transaction_costz)
         leverage = st.number_input("Leverage", value=leveragez)
         rolling_window = st.number_input("Rolling Window", value=rolling_windowz)
-        stop_loss = st.number_input("Stop Loss (%)", value=stop_lossz)
+        stop_loss = st.number_input("Stop Loss", value=stop_lossz)
     with col2:
         Asset2_ticker = st.text_input("Ticker Asset 2", value=Asset2_tickerz)
         end = st.date_input("End Date", pd.to_datetime(endz))
         interval = st.selectbox("Frequency", ["1d", "1h", "1wk"])
         initial_capital = st.number_input("Starting Capital", value=initial_capitalz)
         soglia_z_score = st.number_input("Z-score Threshold", value=soglia_z_scorez)
-        take_profit = st.number_input("Take Profit (%)", value=take_profitz)
+        take_profit = st.number_input("Take Profit", value=take_profitz)
 
     in_sample_years = st.number_input("In-Sample Years", value=in_sample_yearsz)
     out_sample_years = st.number_input("Out-of-Sample Years", value=out_sample_yearsz)
